@@ -254,20 +254,25 @@
         let data = null;
         let countdownInterval = null;
 
+    
         async function loadData() {
             try {
-                const response = await fetch(`${window.location.pathname.replace(/[^/]+$/, '')}data/data.json`);
-                if (!response.ok) throw new Error('Failed to fetch data');
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('projectsGrid').innerHTML = 
-                    '<p style="text-align: center; color: var(--text-secondary);">Failed to load projects. Please check the data.json file.</p>';
-                return null;
-                    }
-        }
+                const basePath = window.location.pathname.replace(/[^/]+$/, '');
+                const response = await fetch(`${basePath}data/data.json`);
 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                data = await response.json();
+                initializePage(data);
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.querySelector('.container').innerHTML =
+                    '<div class="no-data">Error loading data. Please check if data/data.json exists.</div>';
+            }
+        }
         function initializePage() {
             // Check maintenance mode
             const maintenanceBanner = document.getElementById('maintenanceBanner');
@@ -350,7 +355,7 @@
         }
 
         // Load data on page load
-        const data = await loadData();
+        loadData();
         initializePage();
     </script>
 </body>
