@@ -1,7 +1,7 @@
 {
   "maintenance": false,
   "start_date": "2025-12-02",
-  "start_time": "9:00",
+  "start_time": "9:00:00",
   "wifi": {
     "all_wifis": {
       "SCHULE-G": "?"
