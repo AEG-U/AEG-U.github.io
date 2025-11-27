@@ -255,7 +255,7 @@
         </header>
 
         <div id="maintenanceMessage" class="maintenance-message hidden">
-            System is currently under maintenance. Please check back later.
+            <span id="maintenanceText"></span>
         </div>
 
         <div id="countdown" class="countdown hidden">
@@ -314,6 +314,8 @@
 
         function initializePage() {
             if (data.maintenance) {
+                const msg = data.maintenance_msg || "System is currently under maintenance.";
+                document.getElementById('maintenanceText').textContent = msg;
                 document.getElementById('maintenanceMessage').classList.remove('hidden');
                 document.getElementById('status').textContent = 'Under Maintenance';
                 return;
