@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Access Countdown</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 100%);
+            color: #e0d0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #b794f6;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(183, 148, 246, 0.5);
+        }
+
+        .maintenance-banner {
+            background: linear-gradient(135deg, #8b0000 0%, #4a0404 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            border: 2px solid #ff4444;
+            box-shadow: 0 0 30px rgba(255, 68, 68, 0.3);
+        }
+
+        .maintenance-banner h2 {
+            color: #ff6666;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .countdown-container {
+            background: rgba(183, 148, 246, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            border: 2px solid #b794f6;
+            box-shadow: 0 0 40px rgba(183, 148, 246, 0.2);
+        }
+
+        .countdown-title {
+            font-size: 1.5em;
+            color: #b794f6;
+            margin-bottom: 30px;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 100px;
+            border: 1px solid #7c3aed;
+        }
+
+        .countdown-value {
+            font-size: 3em;
+            color: #b794f6;
+            font-weight: bold;
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 0.9em;
+            color: #9d7ed0;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .wifi-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .wifi-card {
+            background: rgba(183, 148, 246, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #7c3aed;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .wifi-card:hover {
+            background: rgba(183, 148, 246, 0.2);
+            border-color: #b794f6;
+            box-shadow: 0 0 30px rgba(183, 148, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .wifi-name {
+            font-size: 1.5em;
+            color: #b794f6;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .wifi-icon {
+            font-size: 1.2em;
+        }
+
+        .wifi-details {
+            display: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #7c3aed;
+        }
+
+        .wifi-details.active {
+            display: block;
+        }
+
+        .current-password {
+            background: rgba(124, 58, 237, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .password-label {
+            color: #9d7ed0;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .password-value {
+            color: #e0d0ff;
+            font-size: 1.3em;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+
+        .password-history {
+            margin-top: 20px;
+        }
+
+        .history-title {
+            color: #b794f6;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .history-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid #7c3aed;
+        }
+
+        .history-password {
+            color: #e0d0ff;
+            font-family: 'Courier New', monospace;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #9d7ed0;
+            font-style: italic;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .countdown-value {
+                font-size: 2em;
+            }
+
+            .countdown-item {
+                min-width: 80px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📡 WiFi Access Portal</h1>
+        </div>
+
+        <div id="maintenanceBanner" class="maintenance-banner hidden">
+            <h2>⚠️ Maintenance Mode</h2>
+            <p>The system is currently under maintenance. Please check back later.</p>
+        </div>
+
+        <div id="countdownSection" class="countdown-container">
+            <div class="countdown-title">Time until WiFi access available</div>
+            <div class="countdown">
+                <div class="countdown-item">
+                    <span class="countdown-value" id="days">0</span>
+                    <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="hours">0</span>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="minutes">0</span>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="seconds">0</span>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="wifiSection" class="wifi-list hidden"></div>
+    </div>
+
+    <script>
+        let data = null;
+        let countdownInterval = null;
+
+        async function loadData() {
+            try {
+                const response = await fetch('data/data.json');
+                data = await response.json();
+                initializePage();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.querySelector('.container').innerHTML = 
+                    '<div class="no-data">Error loading data. Please check if data/data.json exists.</div>';
+            }
+        }
+
+        function initializePage() {
+            // Check maintenance mode
+            const maintenanceBanner = document.getElementById('maintenanceBanner');
+            if (data.maintenance) {
+                maintenanceBanner.classList.remove('hidden');
+            }
+
+            // Start countdown
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        function updateCountdown() {
+            const targetDate = new Date(`${data.start_date}T${data.start_time}:00`);
+            const now = new Date();
+            const difference = targetDate - now;
+
+            if (difference <= 0) {
+                // Time has passed, show WiFi list
+                clearInterval(countdownInterval);
+                document.getElementById('countdownSection').classList.add('hidden');
+                displayWiFiList();
+            } else {
+                // Update countdown
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = days;
+                document.getElementById('hours').textContent = hours;
+                document.getElementById('minutes').textContent = minutes;
+                document.getElementById('seconds').textContent = seconds;
+            }
+        }
+
+        function displayWiFiList() {
+            const wifiSection = document.getElementById('wifiSection');
+            wifiSection.classList.remove('hidden');
+
+            const allWifis = data.wifi.all_wifis;
+            const wifiOld = data.wifi.wifi_old;
+
+            let html = '';
+            for (const [wifiName, currentPassword] of Object.entries(allWifis)) {
+                const passwordHistory = wifiOld[wifiName] || [];
+                
+                html += `
+                    <div class="wifi-card" onclick="toggleWiFiDetails('${wifiName}')">
+                        <div class="wifi-name">
+                            <span class="wifi-icon">📶</span>
+                            <span>${wifiName}</span>
+                        </div>
+                        <div id="details-${wifiName}" class="wifi-details">
+                            <div class="current-password">
+                                <div class="password-label">Current Password:</div>
+                                <div class="password-value">${currentPassword}</div>
+                            </div>
+                            ${passwordHistory.length > 0 ? `
+                                <div class="password-history">
+                                    <div class="history-title">📜 Password History</div>
+                                    ${passwordHistory.map(pwd => `
+                                        <div class="history-item">
+                                            <div class="history-password">${pwd}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : '<div class="no-data">No password history available</div>'}
+                        </div>
+                    </div>
+                `;
+            }
+
+            wifiSection.innerHTML = html;
+        }
+
+        function toggleWiFiDetails(wifiName) {
+            const detailsElement = document.getElementById(`details-${wifiName}`);
+            detailsElement.classList.toggle('active');
+        }
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>
