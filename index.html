@@ -256,14 +256,16 @@
 
         async function loadData() {
             try {
-                const response = await fetch('data/data.json');
-                data = await response.json();
-                initializePage();
+                const response = await fetch(`${window.location.pathname.replace(/[^/]+$/, '')}data/data.json`);
+                if (!response.ok) throw new Error('Failed to fetch data');
+                const data = await response.json();
+                return data;
             } catch (error) {
-                console.error('Error loading data:', error);
-                document.querySelector('.container').innerHTML = 
-                    '<div class="no-data">Error loading data. Please check if data/data.json exists.</div>';
-            }
+                console.error('Error fetching data:', error);
+                document.getElementById('projectsGrid').innerHTML = 
+                    '<p style="text-align: center; color: var(--text-secondary);">Failed to load projects. Please check the data.json file.</p>';
+                return null;
+                    }
         }
 
         function initializePage() {
@@ -348,7 +350,7 @@
         }
 
         // Load data on page load
-        loadData();
+        const data = await loadData();
     </script>
 </body>
 </html>
