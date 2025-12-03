@@ -4,11 +4,15 @@
   "release": "2025-12-09T13:00:00+01:00",
   "wifi": {
     "all_wifis": {
-      "SCHULE-G": "?"
+      "SCHULE-G": "?",
+      "SZG-Schule": "ewf2hKHckR" 
     },
     "wifi_old": {
       "SCHULE-G": [
         "MLgFwR5CWu5QqihHfpCb"
+      ],
+      "SZG-SCHULE": [
+        "ewf2hKHckR"
       ]
     }
   }
